@@ -21,8 +21,8 @@ const userSchema = new Schema({
     required: true,
     minlength: 6
   },
-  name: {
-    type: String,
+  firstname: {
+    type: String, 
     index: true,
     trim: true
   },
@@ -71,7 +71,7 @@ userSchema.pre('save', function (next) {
 userSchema.methods = {
   view (full) {
     let view = {}
-    let fields = ['id', 'name', 'picture']
+    let fields = ['id', 'firstname', 'picture']
 
     if (full) {
       fields = [...fields, 'email', 'createdAt']
@@ -94,18 +94,18 @@ userSchema.statics = {
     return this.findOne({ $or: [{ [`services.${service}`]: id }, { email }] }).then((user) => {
       if (user) {
         user.services[service] = id
-        user.name = name
+        user.name = firstname
         user.picture = picture
         return user.save()
       } else {
         const password = randtoken.generate(16)
-        return this.create({ services: { [service]: id }, email, password, name, picture })
+        return this.create({ services: { [service]: id }, email, password, firstname, picture })
       }
     })
   }
 }
 
-userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] })
+userSchema.plugin(mongooseKeywords, { paths: ['email', 'firstname'] })
 
 const model = mongoose.model('User', userSchema)
 
